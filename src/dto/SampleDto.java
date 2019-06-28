@@ -46,7 +46,8 @@ public class SampleDto extends Dto {
 		case "deleted":
 			setDeleted(Boolean.parseBoolean(field));
 		default:
-			System.out.println("this field does not exist!( ;∀;)\nfieldname:" + fieldname + "\nfield:" + field);
+			System.out.println("this field does not exist!( ;∀;)\nfieldname:" + fieldname
+					+ "\nfield:" + field);
 		}
 	}
 
@@ -85,11 +86,6 @@ public class SampleDto extends Dto {
 	@Override
 	public int primaryKeys() {
 		return 1;
-	}
-
-	@Override
-	public String getTableName() {
-		return "sample";
 	}
 
 }

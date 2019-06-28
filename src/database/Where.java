@@ -4,23 +4,21 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class Where extends ExecuteQuery {
-	private Dto table;
-	private StringBuilder query;
-	private boolean isSecond = false;
-	private ArrayList<String> colums;
+public class Where extends ExecuteQuery implements CreateQueryMethod {
+	private DBInfo information;
+	private boolean isSecond;
 
-	public Where(StringBuilder query, Dto table, ArrayList<String> colums) {
-		this.query = query;
-		this.table = table;
-		this.colums = colums;
+	public Where(DBInfo infomation) {
+		super();
+		this.information = infomation;
+		this.isSecond = false;
 	}
 
 	public Where where(String column, Operator operator, Object value) {
 		if (isSecond) {
 			return where(LogicalOperator.AND, column, operator, value);
 		}
-		query.append(" where ");
+		setColumns(information.getQuery(), "where");
 		setWhere(column, operator, value);
 		isSecond = true;
 		return this;
@@ -28,13 +26,13 @@ public class Where extends ExecuteQuery {
 
 	public Where where(LogicalOperator logicalOperator, String column, Operator operator,
 			Object value) {
-		query.append(" " + logicalOperator.name() + " ");
+		setColumns(information.getQuery(), logicalOperator.name());
 		setWhere(column, operator, value);
 		return this;
 	}
 
 	public ArrayList<Dto> executeQuery() {
-		return executeQuery(query, table, colums);
+		return executeQuery(information);
 	}
 
 	/**
@@ -53,28 +51,27 @@ public class Where extends ExecuteQuery {
 	private void setWhere(String column, Operator operator, Object value) {
 		String classStr = value.getClass().getName();
 		System.out.println(classStr);
-		query.append(" " + column + " " + operator.toString() + " ");
+
+		information.getQuery().append(" " + column + " " + operator.toString() + " ");
+
 		switch (classStr) {
 		case "java.lang.String":
 		case "java.sql.Date":
-			setStringColumns(query, value.toString());
+			setStringColumns(information.getQuery(), value.toString());
 			break;
 		case "java.lang.Integer":
-			query.append(" " + value.toString() + " ");
+			setColumns(information.getQuery(), value.toString());
 			break;
 		case "java.util.Date":
-			setStringColumns(query, value.toString());
+			setStringColumns(information.getQuery(), value.toString());
 			break;
 		case "java.util.Calendar":
-			query.append(new SimpleDateFormat("yyyy-mm-dd").format((Calendar) value));
+			information.getQuery()
+					.append(new SimpleDateFormat("yyyy-mm-dd").format((Calendar) value));
 			break;
 		default:
 			System.out.println("unecpected class : " + value.toString());
 			break;
 		}
-	}
-
-	private static void setStringColumns(StringBuilder query, String value) {
-		query.append(" \"" + value + "\" ");
 	}
 }

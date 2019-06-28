@@ -1,16 +1,14 @@
 package controller;
 
-import java.util.ArrayList;
-
-import database.Dao;
+import dao.SampleDao;
+import database.DB;
 import database.Operator;
-import dto.SampleDto;
 
 public class Main {
 
 	public static void main(String[] args) {
-		ArrayList<SampleDto> sampleDtos = new Dao(new SampleDto()).select("id")
-				.where("id", Operator.EQUAL, 2).executeQuery();
+		new DB(SampleDao.getInstance(), SampleDao.getType()).select().where("id", Operator.EQUAL,
+				2);
 	}
 
 }

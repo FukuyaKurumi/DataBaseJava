@@ -14,10 +14,10 @@ public class ExecuteQuery {
 	private Dto table;
 	ArrayList<String> columns;
 
-	ArrayList<Dto> executeQuery(StringBuilder query, Dto table, ArrayList<String> columns) {
+	ArrayList<Dto> executeQuery(DBInfo infomation) {
 		this.table = table;
 		this.columns = columns;
-		System.out.println("executeQuery : " + query);
+		System.out.println("executeQuery : " + infomation.getQuery());
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -30,7 +30,7 @@ public class ExecuteQuery {
 					Env.PASS.toString());
 
 			// create sql and run it.
-			preparedStatement = connection.prepareStatement(query.toString());
+			preparedStatement = connection.prepareStatement(infomation.getQuery().toString());
 			resultSet = preparedStatement.executeQuery();
 			return result(resultSet, result);
 		} catch (ClassNotFoundException e) {
