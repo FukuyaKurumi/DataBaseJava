@@ -1,10 +1,10 @@
 package database;
 
-public class DB implements CreateQueryMethod {
+public class DB<E extends Dto> implements CreateQueryMethod {
 	DBInfo information;
 
-	public DB(Dao dao, Dto dto) {
-		information = new DBInfo(dao, dto);
+	public DB(Dao<E> dao) {
+		information = new DBInfo(dao, dao.getInstance().getDto());
 	}
 
 	/**
@@ -14,13 +14,13 @@ public class DB implements CreateQueryMethod {
 	 *            id,name from user のid,nameがcolumns
 	 * @return 次にwhere句を指定する。
 	 */
-	public Where select(String... columns) {
+	public Where<E> select(String... columns) {
 		System.out.print("set select phrase... : ");
 		setColumns(information.getQuery(), "select");
 		if (columns.length == 0) {
-			setColumns(information.getQuery(), "* from ", information.getDao().getTableName());
+			setColumns(information.getQuery(), "*", "from", information.getDao().getTableName());
 			System.out.println(information.getQuery().toString());
-			return new Where(information);
+			return new Where<E>(information);
 		}
 		for (String column : columns) {
 			setColumns(information.getQuery(), column);
@@ -30,7 +30,7 @@ public class DB implements CreateQueryMethod {
 				information.getQuery().length());
 		setColumns(information.getQuery(), "from", information.getDao().getTableName());
 		System.out.println(information.getQuery());
-		return new Where(information);
+		return new Where<E>(information);
 	}
 
 }

@@ -10,18 +10,16 @@ import java.util.ArrayList;
 
 import env.Env;
 
-public class ExecuteQuery {
-	private Dto table;
-	ArrayList<String> columns;
+public class ExecuteQuery<E extends Dto> {
+	DBInfo information;
 
-	ArrayList<Dto> executeQuery(DBInfo infomation) {
-		this.table = table;
-		this.columns = columns;
+	ArrayList<E> executeQuery(DBInfo infomation) {
+		this.information = infomation;
 		System.out.println("executeQuery : " + infomation.getQuery());
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
-		ArrayList<Dto> result = new ArrayList<>();
+		ArrayList<E> result = new ArrayList<>();
 
 		try {
 			// access the database.
@@ -56,25 +54,28 @@ public class ExecuteQuery {
 
 	}
 
-	private ArrayList<Dto> result(ResultSet resultSet, ArrayList<Dto> result)
+	private ArrayList<E> result(ResultSet resultSet, ArrayList<E> result)
 			throws ClassNotFoundException, SQLException {
+		ArrayList<String> columns = information.getColumns();
+		Dto dto = information.getDto();
 		if (columns.size() == 0) {
-			columns = new DtoMethod<>().getFieldNames(table);
+			information.setColumns(new DtoMethod<>()
+					.getFieldNames(information.getDao().getTableName()));
 		}
 		while (resultSet.next()) {
 			for (String s : columns) {
-				table.setFields(s, resultSet.getString(s));
-				System.out.println(table.getFields(s));
+				dto.setFields(s, resultSet.getString(s));
+				System.out.println(dto.getFields(s));
 			}
 			Dto tmpDto;
 			try {
-				tmpDto = Dto.deepcopy(table);
+				tmpDto = Dto.deepcopy(dto);
 			} catch (IOException e) {
 				System.out.println("deepcopy error.");
 				e.printStackTrace();
 				return null;
 			}
-			result.add(tmpDto);
+			result.add((E) tmpDto);
 		}
 		return result;
 	}

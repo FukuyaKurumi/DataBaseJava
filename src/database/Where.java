@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class Where extends ExecuteQuery implements CreateQueryMethod {
+public class Where<E extends Dto> extends ExecuteQuery<E> implements CreateQueryMethod {
 	private DBInfo information;
 	private boolean isSecond;
 
@@ -14,7 +14,7 @@ public class Where extends ExecuteQuery implements CreateQueryMethod {
 		this.isSecond = false;
 	}
 
-	public Where where(String column, Operator operator, Object value) {
+	public Where<E> where(String column, Operator operator, Object value) {
 		if (isSecond) {
 			return where(LogicalOperator.AND, column, operator, value);
 		}
@@ -24,14 +24,14 @@ public class Where extends ExecuteQuery implements CreateQueryMethod {
 		return this;
 	}
 
-	public Where where(LogicalOperator logicalOperator, String column, Operator operator,
+	public Where<E> where(LogicalOperator logicalOperator, String column, Operator operator,
 			Object value) {
 		setColumns(information.getQuery(), logicalOperator.name());
 		setWhere(column, operator, value);
 		return this;
 	}
 
-	public ArrayList<Dto> executeQuery() {
+	public ArrayList<E> executeQuery() {
 		return executeQuery(information);
 	}
 

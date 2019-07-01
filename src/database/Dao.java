@@ -1,17 +1,19 @@
 package database;
 
-public abstract class Dao {
+import java.util.ArrayList;
 
-	protected abstract void setTableName();
+public abstract class Dao<E extends Dto> {
 
-	protected abstract String getTableName();
-
-	protected abstract void setType();
-
-	protected abstract void setSingleton();
-
-	public static Dao getInstance() {
-		return null;
+	public Dao<E> getInstance() {
+		return this;
 	}
 
+	public abstract String getTableName();
+
+	public ArrayList<E> changeType(ArrayList<Dto> resultDtos) {
+		ArrayList<E> result = new ArrayList<>();
+		return result;
+	}
+
+	public abstract E getDto();
 }

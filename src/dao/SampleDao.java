@@ -6,26 +6,27 @@ import database.Dao;
 import database.Dto;
 import dto.SampleDto;
 
-public class SampleDao extends Dao {
-	private static SampleDto type;
+public class SampleDao extends Dao<SampleDto> {
+	private static SampleDto dto = new SampleDto();
 	private static SampleDao singleton;
-	private static String tableName;
+	private static String tableName = "sample";
 
-	private SampleDao() {
-		setSingleton();
-		setTableName();
-		setType();
+	public SampleDao() {
+		singleton = this;
 	}
 
-	public static SampleDao getInstance() {
+	@Override
+	public SampleDao getInstance() {
 		return singleton;
 	}
 
-	public static SampleDto getType() {
-		return type;
+	@Override
+	public SampleDto getDto() {
+		return dto;
 	}
 
-	public static ArrayList<SampleDto> changeType(ArrayList<Dto> resultDtos) {
+	@Override
+	public ArrayList<SampleDto> changeType(ArrayList<Dto> resultDtos) {
 		ArrayList<SampleDto> result = new ArrayList<>();
 		for (Dto dto : resultDtos) {
 			result.add((SampleDto) dto);
@@ -34,22 +35,7 @@ public class SampleDao extends Dao {
 	}
 
 	@Override
-	protected void setTableName() {
-		tableName = "sample";
-	}
-
-	@Override
-	protected void setType() {
-		type = new SampleDto();
-	}
-
-	@Override
-	protected void setSingleton() {
-		singleton = new SampleDao();
-	}
-
-	@Override
-	protected String getTableName() {
+	public String getTableName() {
 		return tableName;
 	}
 
