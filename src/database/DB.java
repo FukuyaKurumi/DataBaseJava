@@ -23,7 +23,7 @@ public class DB<E extends Dto> implements CreateQueryMethod {
 			return new Where<E>(information);
 		}
 		for (String column : columns) {
-			setColumns(information.getQuery(), column);
+			setColumns(information.getQuery(), column, ",");
 			information.getColumns().add(column);
 		}
 		information.getQuery().delete(information.getQuery().length() - 2,

@@ -54,16 +54,28 @@ public class ExecuteQuery<E extends Dto> {
 
 	}
 
+	/**
+	 * リザルトセットを受け取ってDtoアレイリストに変換するメソッド
+	 * @param resultSet
+	 * @param result
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	private ArrayList<E> result(ResultSet resultSet, ArrayList<E> result)
 			throws ClassNotFoundException, SQLException {
+		System.out.println("start ExecuteQuery.result");
 		ArrayList<String> columns = information.getColumns();
 		Dto dto = information.getDto();
 		if (columns.size() == 0) {
-			information.setColumns(new DtoMethod<>()
-					.getFieldNames(information.getDao().getTableName()));
+			System.out.println(information.getDto().getFieldNames());
+			information.setColumns(information.getDto().getFieldNames());
+			columns = information.getColumns();
 		}
 		while (resultSet.next()) {
+			System.out.println("check resultSet");
 			for (String s : columns) {
+				System.out.println("kokodayo! : " + s);
 				dto.setFields(s, resultSet.getString(s));
 				System.out.println(dto.getFields(s));
 			}

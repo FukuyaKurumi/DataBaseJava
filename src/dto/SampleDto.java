@@ -18,6 +18,10 @@ public class SampleDto extends Dto {
 		this.deleted = deleted;
 	}
 
+	public void setDeleted(String deleted) {
+		this.deleted = parseBoolean(deleted);
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -44,7 +48,8 @@ public class SampleDto extends Dto {
 			setName(field);
 			break;
 		case "deleted":
-			setDeleted(Boolean.parseBoolean(field));
+			setDeleted(field);
+			break;
 		default:
 			System.out.println("this field does not exist!( ;∀;)\nfieldname:" + fieldname
 					+ "\nfield:" + field);
