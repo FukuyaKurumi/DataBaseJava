@@ -10,9 +10,8 @@ import dto.SampleDto;
 public class Main {
 
 	public static void main(String[] args) {
-		ArrayList<SampleDto> samples = new DB<SampleDto>(new SampleDao()).select()
-				.where("name", Operator.LIKE, "%a%")
-				.executeQuery();
+		ArrayList<SampleDto> samples = new DB<SampleDto>(new SampleDao()).select("id", "name")
+				.where("name", Operator.EQUAL, "banana").executeQuery();
 
 		for (SampleDto sampleDto : samples) {
 			ArrayList<String> fields = sampleDto.getFieldNames();

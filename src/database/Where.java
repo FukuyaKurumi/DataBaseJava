@@ -18,7 +18,7 @@ public class Where<E extends Dto> extends ExecuteQuery<E> implements CreateQuery
 		if (isSecond) {
 			return where(LogicalOperator.AND, column, operator, value);
 		}
-		setColumns(information.getQuery(), "where");
+		appendQuery(information.getQuery(), "where");
 		setWhere(column, operator, value);
 		isSecond = true;
 		return this;
@@ -26,7 +26,7 @@ public class Where<E extends Dto> extends ExecuteQuery<E> implements CreateQuery
 
 	public Where<E> where(LogicalOperator logicalOperator, String column, Operator operator,
 			Object value) {
-		setColumns(information.getQuery(), logicalOperator.name());
+		appendQuery(information.getQuery(), logicalOperator.name());
 		setWhere(column, operator, value);
 		return this;
 	}
@@ -57,13 +57,13 @@ public class Where<E extends Dto> extends ExecuteQuery<E> implements CreateQuery
 		switch (classStr) {
 		case "java.lang.String":
 		case "java.sql.Date":
-			setStringColumns(information.getQuery(), value.toString());
+			appendQueryString(information.getQuery(), value.toString());
 			break;
 		case "java.lang.Integer":
-			setColumns(information.getQuery(), value.toString());
+			appendQuery(information.getQuery(), value.toString());
 			break;
 		case "java.util.Date":
-			setStringColumns(information.getQuery(), value.toString());
+			appendQueryString(information.getQuery(), value.toString());
 			break;
 		case "java.util.Calendar":
 			information.getQuery()
