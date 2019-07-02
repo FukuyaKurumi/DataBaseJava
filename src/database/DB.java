@@ -73,6 +73,18 @@ public class DB<E extends Dto> {
 		return new Values<E>(information);
 	}
 
+	public Set<E> update() {
+		System.out.print("set update phrase... : ");
+		CreateQueryMethod.appendQuery(information.getQuery(), "update",
+				information.getDao().getTableName());
+		return new Set<E>(information);
+	}
 
+	public Where<E> delete() {
+		System.out.print("set delete phrase... : ");
+		CreateQueryMethod.appendQuery(information.getQuery(), "delete", "from",
+				information.getDao().getTableName());
+		return new Where<E>(information);
+	}
 
 }

@@ -20,7 +20,7 @@ public class Main {
 			}
 		}
 		samples = new DB<SampleDto>(new SampleDao()).select()
-				.where("name", Operator.LIKE, "%o%").executeQuery();
+				.where("name", Operator.LIKE, "%b%").executeQuery();
 		for (SampleDto sampleDto : samples) {
 			ArrayList<String> fields = sampleDto.getFieldNames();
 			for (String string : fields) {
@@ -29,10 +29,17 @@ public class Main {
 			}
 		}
 
-//		int num = new DB<SampleDto>(new SampleDao()).insert("name").values("watermeron")
-//				.executeUpdate();
-//
-//		System.out.println("insert : " + num);
+		int num = new DB<SampleDto>(new SampleDao()).insert("id", "name", "deleted")
+				.values(10, "watermeron", false).executeUpdate();
+		System.out.println("insert : " + num);
+
+		int num2 = new DB<SampleDto>(new SampleDao()).update().set("name", "suika")
+				.where("name", Operator.EQUAL, "watermeron").executeUpdate();
+		System.out.println(num2);
+
+		int num3 = new DB<SampleDto>(new SampleDao()).delete().where("id", Operator.EQUAL, 10)
+				.executeUpdate();
+		System.out.println(num3);
 	}
 
 }

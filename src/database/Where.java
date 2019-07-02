@@ -6,9 +6,10 @@ public class Where<E extends Dto> {
 	private DBInfo information;
 	private boolean isSecond;
 
-	public Where(DBInfo infomation) {
+	public Where(DBInfo information) {
 		super();
-		this.information = infomation;
+		this.information = information;
+		CreateQueryMethod.appendQuery(information.getQuery(), "where");
 		this.isSecond = false;
 	}
 
@@ -16,7 +17,6 @@ public class Where<E extends Dto> {
 		if (isSecond) {
 			return where(LogicalOperator.AND, column, operator, value);
 		}
-		CreateQueryMethod.appendQuery(information.getQuery(), "where");
 		setWhere(column, operator, value);
 		isSecond = true;
 		return this;
@@ -31,6 +31,10 @@ public class Where<E extends Dto> {
 
 	public ArrayList<E> executeQuery() {
 		return new ExecuteQuery<E>(information).executeQuery();
+	}
+
+	public int executeUpdate() {
+		return new ExecuteUpdate<E>(information).executeUpdate();
 	}
 
 	/**
@@ -48,6 +52,6 @@ public class Where<E extends Dto> {
 	 */
 	private void setWhere(String column, Operator operator, Object value) {
 		information.getQuery().append(" " + column + " " + operator.toString() + " ");
-		CreateQueryMethod.setValueClassCast(value, information.getQuery());
+		CreateQueryMethod.setValueClassCast(information.getQuery(), value);
 	}
 }

@@ -27,7 +27,7 @@ public class CreateQueryMethod {
 		query.delete(query.length() - 2, query.length());
 	}
 
-	public static void setValueClassCast(Object value, StringBuilder query) {
+	public static void setValueClassCast(StringBuilder query, Object value) {
 		String classStr = value.getClass().getName();
 		System.out.println(classStr);
 		switch (classStr) {
@@ -36,6 +36,7 @@ public class CreateQueryMethod {
 			appendQueryString(query, value.toString());
 			break;
 		case "java.lang.Integer":
+		case "java.lang.Boolean":
 			appendQuery(query, value.toString());
 			break;
 		case "java.util.Date":
@@ -50,10 +51,9 @@ public class CreateQueryMethod {
 		}
 	}
 
-	//TODO　作る
 	public static void setValueClassCastWithComma(StringBuilder query, Object... values) {
 		for (Object value : values) {
-			setValueClassCast(value, query);
+			setValueClassCast(query, value);
 			appendQuery(query, ",");
 		}
 		query.delete(query.length() - 2, query.length());
