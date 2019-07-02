@@ -88,9 +88,4 @@ public class SampleDto extends Dto {
 		return true;
 	}
 
-	@Override
-	public int primaryKeys() {
-		return 1;
-	}
-
 }

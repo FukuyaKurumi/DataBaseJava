@@ -82,6 +82,10 @@ public class DB<E extends Dto> {
 
 	public Where<E> delete() {
 		System.out.print("set delete phrase... : ");
+		if (information.getDto().isLogicalDelete()) {
+			update().set("deleted", true);
+			return new Where<E>(information);
+		}
 		CreateQueryMethod.appendQuery(information.getQuery(), "delete", "from",
 				information.getDao().getTableName());
 		return new Where<E>(information);

@@ -61,13 +61,6 @@ public abstract class Dto implements Serializable {
 	public abstract Boolean isLogicalDelete();
 
 	/**
-	 * Dtoの主キーの数を返すメソッド
-	 *
-	 * @return 主キーの数
-	 */
-	public abstract int primaryKeys();
-
-	/**
 	 *  method to return a name list of all fields.
 	 * @param dto
 	 * @return
