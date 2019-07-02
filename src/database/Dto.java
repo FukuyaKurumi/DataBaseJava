@@ -120,8 +120,8 @@ public abstract class Dto implements Serializable {
 	 * @param dto
 	 * @return
 	 */
-	public ArrayList<Class<?>> getFieldClasses(Dto dto) {
-		Dto dto2 = this;
+	public ArrayList<Class<?>> getFieldClasses() {
+		Dto dto = this;
 		ArrayList<Class<?>> result = new ArrayList<>();
 		for (Field f : dto.getClass().getDeclaredFields()) {
 			f.setAccessible(true);
