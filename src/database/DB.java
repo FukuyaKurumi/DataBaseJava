@@ -1,9 +1,8 @@
 package database;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class DB<E extends Dto> implements CreateQueryMethod {
+public class DB<E extends Dto> {
 	DBInfo information;
 
 	public DB(Dao<E> dao) {
@@ -19,18 +18,23 @@ public class DB<E extends Dto> implements CreateQueryMethod {
 	 */
 	public Where<E> select(String... columns) {
 		System.out.print("set select phrase... : ");
-		appendQuery(information.getQuery(), "select");
+		CreateQueryMethod.appendQuery(information.getQuery(), "select");
 		if (columns.length == 0) {
-			appendQuery(information.getQuery(), "*", "from", information.getDao().getTableName());
+			CreateQueryMethod.appendQuery(information.getQuery(), "*", "from",
+					information.getDao().getTableName());
 			System.out.println(information.getQuery().toString());
 			return new Where<E>(information);
 		}
-		information.setColumns((ArrayList<String>) Arrays.asList(columns));
+		for (String string : columns) {
+			information.getColumns().add(string);
+		}
+		//		information.setColumns((ArrayList<String>) Arrays.asList(columns));
 		for (String value : columns) {
 			information.getColumns().add(value);
 		}
-		setValuesWithComma(information.getQuery(), columns);
-		appendQuery(information.getQuery(), "from", information.getDao().getTableName());
+		CreateQueryMethod.setValuesWithComma(information.getQuery(), columns);
+		CreateQueryMethod.appendQuery(information.getQuery(), "from",
+				information.getDao().getTableName());
 		System.out.println(information.getQuery());
 		return new Where<E>(information);
 	}
@@ -44,7 +48,8 @@ public class DB<E extends Dto> implements CreateQueryMethod {
 	 */
 	public Values<E> insert(String... columns) {
 		System.out.print("set insert phrase... : ");
-		appendQuery(information.getQuery(), "insert", "into", information.getDao().getTableName(),
+		CreateQueryMethod.appendQuery(information.getQuery(), "insert", "into",
+				information.getDao().getTableName(),
 				"(");
 		if (columns.length == 0) {
 			ArrayList<String> allColums = information.getDto().getFieldNames();
@@ -58,9 +63,12 @@ public class DB<E extends Dto> implements CreateQueryMethod {
 			}
 			columns = allColums.toArray(new String[allColums.size()]);
 		}
-		information.setColumns((ArrayList<String>) Arrays.asList(columns));
-		setValuesWithComma(information.getQuery(), columns);
-		appendQuery(information.getQuery(), ")", information.getDao().getTableName());
+		for (String string : columns) {
+			information.getColumns().add(string);
+		}
+		//information.setColumns((ArrayList<String>) Arrays.asList(columns));
+		CreateQueryMethod.setValuesWithComma(information.getQuery(), columns);
+		CreateQueryMethod.appendQuery(information.getQuery(), ")");
 		System.out.println(information.getQuery());
 		return new Values<E>(information);
 	}

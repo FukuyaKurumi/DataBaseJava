@@ -1,10 +1,8 @@
 package database;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
-public class Where<E extends Dto> extends ExecuteQuery<E> implements CreateQueryMethod {
+public class Where<E extends Dto> {
 	private DBInfo information;
 	private boolean isSecond;
 
@@ -18,7 +16,7 @@ public class Where<E extends Dto> extends ExecuteQuery<E> implements CreateQuery
 		if (isSecond) {
 			return where(LogicalOperator.AND, column, operator, value);
 		}
-		appendQuery(information.getQuery(), "where");
+		CreateQueryMethod.appendQuery(information.getQuery(), "where");
 		setWhere(column, operator, value);
 		isSecond = true;
 		return this;
@@ -26,13 +24,13 @@ public class Where<E extends Dto> extends ExecuteQuery<E> implements CreateQuery
 
 	public Where<E> where(LogicalOperator logicalOperator, String column, Operator operator,
 			Object value) {
-		appendQuery(information.getQuery(), logicalOperator.name());
+		CreateQueryMethod.appendQuery(information.getQuery(), logicalOperator.name());
 		setWhere(column, operator, value);
 		return this;
 	}
 
 	public ArrayList<E> executeQuery() {
-		return executeQuery(information);
+		return new ExecuteQuery<E>(information).executeQuery();
 	}
 
 	/**
@@ -49,29 +47,7 @@ public class Where<E extends Dto> extends ExecuteQuery<E> implements CreateQuery
 	 *
 	 */
 	private void setWhere(String column, Operator operator, Object value) {
-		String classStr = value.getClass().getName();
-		System.out.println(classStr);
-
 		information.getQuery().append(" " + column + " " + operator.toString() + " ");
-
-		switch (classStr) {
-		case "java.lang.String":
-		case "java.sql.Date":
-			appendQueryString(information.getQuery(), value.toString());
-			break;
-		case "java.lang.Integer":
-			appendQuery(information.getQuery(), value.toString());
-			break;
-		case "java.util.Date":
-			appendQueryString(information.getQuery(), value.toString());
-			break;
-		case "java.util.Calendar":
-			information.getQuery()
-					.append(new SimpleDateFormat("yyyy-mm-dd").format((Calendar) value));
-			break;
-		default:
-			System.out.println("unecpected class : " + value.toString());
-			break;
-		}
+		CreateQueryMethod.setValueClassCast(value, information.getQuery());
 	}
 }
