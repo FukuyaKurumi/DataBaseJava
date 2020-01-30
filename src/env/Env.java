@@ -6,8 +6,10 @@ public enum Env {
 	HOST("localhost"),
 	PORT("3306"),
 	DIR("jdbc:mysql://" + HOST + ":" + PORT + "/" + DATABASE + "?serverTimezone=JST"),
-	USER("user"),
-	PASS("password");
+	UPDATE_USER("user"),
+	UPDATE_PASS("password"),
+	REFERENCE_USER("user"),
+	REFERENCE_PASS("password");
 
 	private String value;
 
@@ -18,10 +20,4 @@ public enum Env {
 	public String toString() {
 		return value;
 	}
-	/*
-	 * Arraylist<User> users ( new
-	 * DB("user").select("id","name").where("id",Operator.EQUAL,"29");
-	 * Arraylist<User> users ( new
-	 * DB("user").select("id","name").where("name",Operator.LIKE,"%大%");
-	 */
 }

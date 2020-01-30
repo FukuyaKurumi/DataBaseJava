@@ -3,21 +3,38 @@ package database;
 import java.util.ArrayList;
 
 public final class DBInfo {
-	private Dao dao;
+	private Dao<Dto> dao;
 	private Dto dto;
 	private StringBuilder query = new StringBuilder();
 	private ArrayList<String> columns = new ArrayList<>();
+	private ArrayList<Object> preparedStatements = new ArrayList<>();
 
-	public DBInfo(Dao dao, Dto dto) {
-		this.dao = dao;
-		this.dto = dto;
+	public ArrayList<Object> getPreparedStatements() {
+		return preparedStatements;
 	}
 
-	public Dao getDao() {
+	/**
+	 * プリペアードステートメントを追加するメソッド。
+	 * 配列でもアレイリストでもエラーは出ないけど、プリペアードステートメントを
+	 * 置き換えるときに一個づついれないとエラーになります。
+	 * @param e
+	 */
+	public void addStatement(Object e) {
+		if (e != null) {
+			preparedStatements.add(e);
+		}
+	}
+
+	public DBInfo(Dao<Dto> dao) {
+		this.dao = dao;
+		this.dto = dao.getDto();
+	}
+
+	public Dao<Dto> getDao() {
 		return dao;
 	}
 
-	public void setDao(Dao dao) {
+	public void setDao(Dao<Dto> dao) {
 		this.dao = dao;
 	}
 

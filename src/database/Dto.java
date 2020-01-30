@@ -26,14 +26,7 @@ public abstract class Dto implements Serializable {
 	 * @param field
 	 *            セットしたいフィールドの値
 	 */
-	public abstract void setFields(String fieldname, String field);
-
-	/**
-	 * フィールドの日本語表示名を返すメソッド
-	 *
-	 * @return フィールドの日本語表示名
-	 */
-	public abstract ArrayList<String> JapanName();
+	public abstract void setFields(String fieldname, Object field);
 
 	/**
 	 * フィールド名からgetterを呼び出すメソッド
@@ -42,7 +35,25 @@ public abstract class Dto implements Serializable {
 	 *            値を得たいフィールドの名前
 	 * @return フィールドの値
 	 */
-	public abstract String getFields(String fieldname);
+	public Object getField(String fieldname) {
+		Dto dto = this;
+		for (Field f : dto.getClass().getDeclaredFields()) {
+			f.setAccessible(true);
+			try {
+				if (f.getName().equals(fieldname) && f.get(dto) != null) {
+					return f.get(dto);
+				}
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} finally {
+				f.setAccessible(false);
+			}
+		}
+		System.out.println("this field does not exist!( ;∀;)\nfieldname:" + fieldname);
+		return null;
+	}
 
 	/**
 	 * 主キーがauto_incrementかどうか
@@ -127,6 +138,28 @@ public abstract class Dto implements Serializable {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * 引数で与えられたフィールドのクラスを返します。
+	 * @param fieldName
+	 * @return
+	 */
+	public Class<?> getFieldClass(String fieldName) {
+		Dto dto = this;
+		for (Field f : dto.getClass().getDeclaredFields()) {
+			f.setAccessible(true);
+			try {
+				if (f.getName().equals(fieldName)) {
+					return f.getType();
+				}
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} finally {
+				f.setAccessible(false);
+			}
+		}
+		return null;
 	}
 
 	/**

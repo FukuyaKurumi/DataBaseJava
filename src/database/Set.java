@@ -2,20 +2,23 @@ package database;
 
 public class Set<E extends Dto> {
 	private DBInfo information;
+	private StringBuilder query;
 	private boolean isSecond = false;
 
 	public Set(DBInfo information) {
 		super();
 		this.information = information;
-		CreateQueryMethod.appendQuery(information.getQuery(), "set");
+		query = information.getQuery();
+		CreateQueryMethod.appendQuery(query, "set");
 	}
 
 	public Set<E> set(String column, Object value) {
 		if (isSecond) {
-			CreateQueryMethod.appendQuery(information.getQuery(), ",");
+			CreateQueryMethod.appendQuery(query, ",");
 		}
-		CreateQueryMethod.appendQuery(information.getQuery(), column, Operator.EQUAL.toString());
-		CreateQueryMethod.setValueClassCast(information.getQuery(), value);
+		CreateQueryMethod.appendQuery(query, column, Operator.EQUAL.toString());
+		information.addStatement(value);
+		CreateQueryMethod.setQuestionMark(query, 1);
 		isSecond = true;
 		return this;
 	}

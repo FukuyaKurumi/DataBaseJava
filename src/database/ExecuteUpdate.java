@@ -1,9 +1,11 @@
 package database;
 
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class ExecuteUpdate<E extends Dto> extends DBConnection {
-	private DBInfo information;
+import env.Env;
+
+public class ExecuteUpdate<E extends Dto> extends Execute {
 
 	public ExecuteUpdate(DBInfo information) {
 		this.information = information;
@@ -13,7 +15,14 @@ public class ExecuteUpdate<E extends Dto> extends DBConnection {
 		System.out.println("executeUpdate : " + information.getQuery());
 		int result = 0;
 		try {
-			createConnection(information);
+			// access the database.
+			Class.forName(Env.DRIVER.toString());
+			connection = DriverManager.getConnection(Env.DIR.toString(), Env.UPDATE_USER.toString(),
+					Env.UPDATE_PASS.toString());
+
+			// create sql and run it.
+			preparedStatement = connection.prepareStatement(information.getQuery().toString());
+			setPreparedStatement();
 			result = preparedStatement.executeUpdate();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

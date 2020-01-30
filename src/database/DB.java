@@ -4,38 +4,35 @@ import java.util.ArrayList;
 
 public class DB<E extends Dto> {
 	DBInfo information;
+	private ArrayList<String> columnNames;
+	private StringBuilder query;
+	private Dao<Dto> dao;
 
+	@SuppressWarnings("unchecked")
 	public DB(Dao<E> dao) {
-		information = new DBInfo(dao, dao.getInstance().getDto());
+		this.dao = (Dao<Dto>) dao;
+		information = new DBInfo(this.dao);
+		columnNames = information.getColumns();
+		query = information.getQuery();
 	}
 
 	/**
-	 *
 	 * @param columns
-	 *            select文でテーブルから持ってきたいカラム名を入力。 引数に何も指定しない場合は*の扱いになる。 例 select
-	 *            id,name from user のid,nameがcolumns
+	 *   select文でテーブルから持ってきたいカラム名を入力。 引数に何も指定しない場合は*の扱いになる。
+	 *   例 select id,name from user のid,nameがcolumns
 	 * @return 次にwhere句を指定する。
 	 */
 	public Where<E> select(String... columns) {
-		System.out.print("set select phrase... : ");
-		CreateQueryMethod.appendQuery(information.getQuery(), "select");
+		CreateQueryMethod.appendQuery(query, "select");
 		if (columns.length == 0) {
-			CreateQueryMethod.appendQuery(information.getQuery(), "*", "from",
-					information.getDao().getTableName());
-			System.out.println(information.getQuery().toString());
+			CreateQueryMethod.appendQuery(query, "*", "from", dao.getTableName());
 			return new Where<E>(information);
 		}
 		for (String string : columns) {
-			information.getColumns().add(string);
+			columnNames.add(string);
 		}
-		//		information.setColumns((ArrayList<String>) Arrays.asList(columns));
-		for (String value : columns) {
-			information.getColumns().add(value);
-		}
-		CreateQueryMethod.setValuesWithComma(information.getQuery(), columns);
-		CreateQueryMethod.appendQuery(information.getQuery(), "from",
-				information.getDao().getTableName());
-		System.out.println(information.getQuery());
+		CreateQueryMethod.setValuesWithComma(query, columns);
+		CreateQueryMethod.appendQuery(query, "from", dao.getTableName());
 		return new Where<E>(information);
 	}
 
@@ -47,9 +44,8 @@ public class DB<E extends Dto> {
 	 * @return
 	 */
 	public Values<E> insert(String... columns) {
-		System.out.print("set insert phrase... : ");
 		CreateQueryMethod.appendQuery(information.getQuery(), "insert", "into",
-				information.getDao().getTableName(),
+				dao.getTableName(),
 				"(");
 		if (columns.length == 0) {
 			ArrayList<String> allColums = information.getDto().getFieldNames();
@@ -64,31 +60,45 @@ public class DB<E extends Dto> {
 			columns = allColums.toArray(new String[allColums.size()]);
 		}
 		for (String string : columns) {
-			information.getColumns().add(string);
+			columnNames.add(string);
 		}
 		//information.setColumns((ArrayList<String>) Arrays.asList(columns));
 		CreateQueryMethod.setValuesWithComma(information.getQuery(), columns);
 		CreateQueryMethod.appendQuery(information.getQuery(), ")");
-		System.out.println(information.getQuery());
 		return new Values<E>(information);
 	}
 
 	public Set<E> update() {
-		System.out.print("set update phrase... : ");
-		CreateQueryMethod.appendQuery(information.getQuery(), "update",
-				information.getDao().getTableName());
+		CreateQueryMethod.appendQuery(query, "update", dao.getTableName());
 		return new Set<E>(information);
 	}
 
 	public Where<E> delete() {
-		System.out.print("set delete phrase... : ");
 		if (information.getDto().isLogicalDelete()) {
 			update().set("deleted", true);
 			return new Where<E>(information);
 		}
 		CreateQueryMethod.appendQuery(information.getQuery(), "delete", "from",
-				information.getDao().getTableName());
+				dao.getTableName());
 		return new Where<E>(information);
+	}
+
+	public ExecuteQuery<E> ExecuteRowQuery(String rowQuery, Object... preparedStatements) {
+		query.append(rowQuery);
+		ArrayList<Object> statements = information.getPreparedStatements();
+		for (Object preparedStatement : preparedStatements) {
+			statements.add(preparedStatement);
+		}
+		return new ExecuteQuery<>(information);
+	}
+
+	public ExecuteUpdate<E> ExecuteRowUpdate(String rowQuery, Object... preparedStatements) {
+		query.append(rowQuery);
+		ArrayList<Object> statements = information.getPreparedStatements();
+		for (Object preparedStatement : preparedStatements) {
+			statements.add(preparedStatement);
+		}
+		return new ExecuteUpdate<>(information);
 	}
 
 }

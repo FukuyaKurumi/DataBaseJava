@@ -1,19 +1,11 @@
 package dao;
 
-import java.util.ArrayList;
-
 import database.Dao;
-import database.Dto;
 import dto.SampleDto;
 
 public class SampleDao extends Dao<SampleDto> {
-	private static SampleDto dto = new SampleDto();
-	private static SampleDao singleton;
-	private static String tableName = "sample";
-
-	public SampleDao() {
-		singleton = this;
-	}
+	public static final SampleDao singleton = new SampleDao();
+	public static final SampleDto dto = new SampleDto();
 
 	@Override
 	public SampleDao getInstance() {
@@ -26,17 +18,8 @@ public class SampleDao extends Dao<SampleDto> {
 	}
 
 	@Override
-	public ArrayList<SampleDto> changeType(ArrayList<Dto> resultDtos) {
-		ArrayList<SampleDto> result = new ArrayList<>();
-		for (Dto dto : resultDtos) {
-			result.add((SampleDto) dto);
-		}
-		return result;
-	}
-
-	@Override
 	public String getTableName() {
-		return tableName;
+		return "sample";
 	}
 
 }

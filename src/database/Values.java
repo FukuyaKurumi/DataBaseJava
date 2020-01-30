@@ -2,16 +2,20 @@ package database;
 
 public class Values<E extends Dto> {
 	private DBInfo information;
+	private StringBuilder query;
 
 	public Values(DBInfo information) {
 		this.information = information;
+		query = information.getQuery();
 	}
 
 	public ExecuteUpdate<E> values(Object... values) {
-		System.out.println("start values : " + information.getQuery());
-		CreateQueryMethod.appendQuery(information.getQuery(), "values", "(");
-		CreateQueryMethod.setValueClassCastWithComma(information.getQuery(), values);
-		CreateQueryMethod.appendQuery(information.getQuery(), ")");
+		CreateQueryMethod.appendQuery(query, "values", "(");
+		CreateQueryMethod.setQuestionMark(query, values.length);
+		for (Object object : values) {
+			information.addStatement(object);
+		}
+		CreateQueryMethod.appendQuery(query, ")");
 		return new ExecuteUpdate<E>(information);
 	}
 }
