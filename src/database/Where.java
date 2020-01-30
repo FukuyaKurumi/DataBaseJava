@@ -1,40 +1,42 @@
 package database;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
-public class Where extends ExecuteQuery {
-	private Dto table;
+public class Where<E extends Dto> {
+	private DBInfo information;
+	private boolean isSecond;
 	private StringBuilder query;
-	private boolean isSecond = false;
-	private ArrayList<String> colums;
 
-	public Where(StringBuilder query, Dto table, ArrayList<String> colums) {
-		this.query = query;
-		this.table = table;
-		this.colums = colums;
+	public Where(DBInfo information) {
+		super();
+		this.information = information;
+		query = information.getQuery();
+		this.isSecond = false;
 	}
 
-	public Where where(String column, Operator operator, Object value) {
+	public Where<E> where(String column, Operator operator, Object value) {
 		if (isSecond) {
 			return where(LogicalOperator.AND, column, operator, value);
 		}
-		query.append(" where ");
+		CreateQueryMethod.appendQuery(query, "where");
 		setWhere(column, operator, value);
 		isSecond = true;
 		return this;
 	}
 
-	public Where where(LogicalOperator logicalOperator, String column, Operator operator,
+	public Where<E> where(LogicalOperator logicalOperator, String column, Operator operator,
 			Object value) {
-		query.append(" " + logicalOperator.name() + " ");
+		CreateQueryMethod.appendQuery(query, logicalOperator.name());
 		setWhere(column, operator, value);
 		return this;
 	}
 
-	public ArrayList<Dto> executeQuery() {
-		return executeQuery(query, table, colums);
+	public ArrayList<E> executeQuery() {
+		return new ExecuteQuery<E>(information).executeQuery();
+	}
+
+	public int executeUpdate() {
+		return new ExecuteUpdate<E>(information).executeUpdate();
 	}
 
 	/**
@@ -51,30 +53,7 @@ public class Where extends ExecuteQuery {
 	 *
 	 */
 	private void setWhere(String column, Operator operator, Object value) {
-		String classStr = value.getClass().getName();
-		System.out.println(classStr);
-		query.append(" " + column + " " + operator.toString() + " ");
-		switch (classStr) {
-		case "java.lang.String":
-		case "java.sql.Date":
-			setStringColumns(query, value.toString());
-			break;
-		case "java.lang.Integer":
-			query.append(" " + value.toString() + " ");
-			break;
-		case "java.util.Date":
-			setStringColumns(query, value.toString());
-			break;
-		case "java.util.Calendar":
-			query.append(new SimpleDateFormat("yyyy-mm-dd").format((Calendar) value));
-			break;
-		default:
-			System.out.println("unecpected class : " + value.toString());
-			break;
-		}
-	}
-
-	private static void setStringColumns(StringBuilder query, String value) {
-		query.append(" \"" + value + "\" ");
+		information.addStatement(value);
+		CreateQueryMethod.appendQuery(query, column, operator.toString(), "?");
 	}
 }

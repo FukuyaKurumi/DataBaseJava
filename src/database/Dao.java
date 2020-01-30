@@ -2,40 +2,19 @@ package database;
 
 import java.util.ArrayList;
 
-public class Dao {
-	private Dto table;
-	private StringBuilder query = new StringBuilder();
-	private String tableName;
-	private ArrayList<String> colums = new ArrayList<>();
+public abstract class Dao<E extends Dto> {
 
-	public Dao(Dto table) {
-		this.table = table;
-		tableName = table.getTableName();
+	public abstract Dao<E> getInstance();
+
+	public abstract String getTableName();
+
+	public ArrayList<E> changeType(ArrayList<Dto> resultDtos) {
+		ArrayList<E> result = new ArrayList<>();
+		for (E e : result) {
+			result.add((E) e);
+		}
+		return result;
 	}
 
-	/**
-	 *
-	 * @param columns
-	 *            select文でテーブルから持ってきたいカラム名を入力。 引数に何も指定しない場合は*の扱いになる。\n 例 select
-	 *            id,name from user のid,nameがcolumns
-	 * @return 次にwhere句を指定する。
-	 */
-	public Where select(String... columns) {
-		System.out.print("set select phrase... : ");
-		query.append(" select ");
-		if (columns.length == 0) {
-			query.append(" * from " + tableName);
-			System.out.println(query.toString());
-			return new Where(query, table, this.colums);
-		}
-		for (String column : columns) {
-			query.append(" " + column + " , ");
-			this.colums.add(column);
-		}
-		query.delete(query.length() - 2, query.length());
-		query.append(" from " + tableName);
-		System.out.println(query);
-		return new Where(query, table, this.colums);
-	}
-
+	public abstract E getDto();
 }
