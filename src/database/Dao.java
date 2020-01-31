@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 public abstract class Dao<E extends Dto> {
 
-	public abstract Dao<E> getInstance();
-
 	public abstract String getTableName();
 
 	public ArrayList<E> changeType(ArrayList<Dto> resultDtos) {
