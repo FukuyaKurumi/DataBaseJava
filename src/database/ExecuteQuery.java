@@ -1,10 +1,13 @@
 package database;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Year;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import env.Env;
 
@@ -16,7 +19,7 @@ public class ExecuteQuery<E extends Dto> extends Execute {
 		super.information = information;
 	}
 
-	ArrayList<E> executeQuery() {
+	public ArrayList<E> executeQuery() {
 		System.out.println("executeQuery : " + information.getQuery());
 		ArrayList<E> result = new ArrayList<>();
 
@@ -98,6 +101,15 @@ public class ExecuteQuery<E extends Dto> extends Execute {
 					break;
 				case "java.sql.Timestamp":
 					dto.setFields(s, resultSet.getTimestamp(s));
+					break;
+				case "java.time.Year":
+					Date y = resultSet.getDate(s);
+					if (y == null) {
+						break;
+					}
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(y);
+					dto.setFields(s, Year.of(calendar.get(Calendar.YEAR)));
 					break;
 				default:
 					System.out.println("unecpected class : " + className.toString());
